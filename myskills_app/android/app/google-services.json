@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "239885424042",
+    "project_id": "myskillappdb",
+    "storage_bucket": "myskillappdb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:239885424042:android:db88a070a9a1e7bb9287d3",
+        "android_client_info": {
+          "package_name": "com.example.myskills_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7TpooTgcCDjddD6jQm0ueU2VPioOGcSo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
