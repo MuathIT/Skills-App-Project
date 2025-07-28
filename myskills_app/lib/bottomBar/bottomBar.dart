@@ -17,10 +17,10 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
 
    // this will nevigate the app thorugh the pages by the pages index.
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   // this method will give the ability to nevigate to the page by passing its index when pressing its icon in the bottom bar.
-  void _nevigate(int index){
+  void _navigate(int index){
     setState(() {
       _selectedIndex = index; // sets the state to nevigate to the pressing icon's page.
     });
@@ -46,7 +46,7 @@ class _BottomBarState extends State<BottomBar> {
         bottomNavigationBar: CurvedNavigationBar(
           backgroundColor: _selectedIndex == 1? ColorsManager.profilePageBacgroundColor : ColorsManager.backgroundColor,
           index: _selectedIndex, // display the current page.
-          onTap: _nevigate, // onTap? nevigate.
+          onTap: _navigate, // onTap? navigate.
           buttonBackgroundColor: ColorsManager.homeWidgetsColor,
           color: ColorsManager.barColor,
           animationDuration: Duration(milliseconds: 400),

@@ -64,7 +64,7 @@ class _AddSkillDialogState extends State<AddSkillDialog> {
         }
       },
 
-      // build the UI.
+      // build the card.
       builder: (context, state) {
         return AlertDialog(
           backgroundColor: ColorsManager.homeWidgetsColor,
@@ -82,6 +82,7 @@ class _AddSkillDialogState extends State<AddSkillDialog> {
                 Container(
                   width: 250,
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
                     gradient: LinearGradient(
                       colors: [Colors.white60, ColorsManager.homeWidgetsColor],
                     ),
@@ -89,8 +90,14 @@ class _AddSkillDialogState extends State<AddSkillDialog> {
                   child: TextField(
                     controller: _skillNamecontroller,
                     decoration: InputDecoration(
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none
+                      ),
                       labelText: "Skill Name",
+                      labelStyle: TextStyle(
+                        color: Colors.grey[850],
+                        fontSize: 18
+                      ),
                       hintText: "Type the skill name..",
                     ),
                   ),
