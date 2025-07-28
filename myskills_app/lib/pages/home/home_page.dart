@@ -43,7 +43,21 @@ class HomeScreen extends StatelessWidget {
           // show a dialog when loading data.
           if (state is HomeLoading){
             return const Center(child: CircularProgressIndicator());
-          } else if (state is HomeSuccess){
+          } 
+          // empty home.
+          else if (state is HomeEmpty){
+            return Center(
+              child: Text(
+                state.emptyMessage,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24
+                ),
+              )
+            );
+          }
+          // success home.
+          else if (state is HomeSuccess){
             // get the user skills from database.
             final skills = state.skills;
             // let the first skill by default be the current skill.
@@ -236,6 +250,19 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           }
+          // home failure.
+          else if (state is HomeFailure){
+            return Center(
+              child: Text(
+                state.failureMessage,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 24
+                ),
+              ),
+            );
+          }
+          // home initial.
           return const Center(child: Text("Error: Couldn't fetch the data."));
         },
       ),

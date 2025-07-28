@@ -4,8 +4,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:myskills_app/controllers/profile/profile_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 
+
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(create: (_) => ProfileCubit()..userInfo(), child: const ProfileScreen());
+  }
+}
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +29,8 @@ class ProfilePage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           else if (state is ProfileSuccess){
+            // get the user info from the state.
+            final user = state.user;
             return Column(
             children: [
               Padding(
@@ -43,12 +56,13 @@ class ProfilePage extends StatelessWidget {
 
                         // user name.
                         Text(
-                          'Hello MUATH',
+                          'Hello ${user['name']}',
                           style: GoogleFonts.bebasNeue(
                             color: Colors.white,
                             fontSize: 28,
                           ),
                         ),
+                        
 
                         SizedBox(),
                       ],
@@ -72,7 +86,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-
+                    
                     const SizedBox(height: 40),
                   ],
                 ),
@@ -112,6 +126,18 @@ class ProfilePage extends StatelessWidget {
               ),
             ],
           );
+          }
+          // show a failure message if state is failure.
+          else if (state is ProfileFailure){
+            return Center(
+              child: Text(
+                state.failureMessage,
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.white
+                ),
+              ),
+            );
           }
           return const SizedBox();
         },

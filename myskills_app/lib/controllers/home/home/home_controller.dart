@@ -15,10 +15,17 @@ class HomeSuccess extends HomeState{
   List< Map<String, dynamic> > skills; // take the user skills from fetch data function.
   HomeSuccess(this.skills);
 }
+
+class HomeEmpty extends HomeState{
+  final String emptyMessage;
+  HomeEmpty(this.emptyMessage);
+}
+
 class HomeFailure extends HomeState{
   final String failureMessage;
   HomeFailure(this.failureMessage);
 }
+
 
 class HomeCubit extends Cubit<HomeState>{
   HomeCubit() : super (HomeInitial());
@@ -40,7 +47,13 @@ class HomeCubit extends Cubit<HomeState>{
         return data; 
       }).toList(); // store them as a lists.
 
-      emit(HomeSuccess(skills));
+      if (skills.isEmpty){ // check if the user has no skills.
+        // emit empty state.
+        emit(HomeEmpty("You don't have skills yet."));
+      }
+      else{
+        emit(HomeSuccess(skills));
+      }
     } catch (e){
       emit(HomeFailure('Error: $e'));
     }
