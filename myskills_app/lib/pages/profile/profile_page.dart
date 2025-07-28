@@ -54,6 +54,7 @@ class ProfileScreen extends StatelessWidget {
                           // ),
                         ),
 
+
                         // user name.
                         Text(
                           'Hello ${user['name']}',
@@ -62,9 +63,16 @@ class ProfileScreen extends StatelessWidget {
                             fontSize: 28,
                           ),
                         ),
-                        
 
-                        SizedBox(),
+                        // more actions button.
+                        IconButton(
+                          onPressed: (){},
+                          icon: const Icon(
+                            Icons.more_horiz,
+                            color: Colors.white,
+                            size: 30,
+                          )
+                        )
                       ],
                     ),
 
