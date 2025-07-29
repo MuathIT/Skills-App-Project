@@ -6,21 +6,9 @@ import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/pages/auth/util/textFieldControllers/text_field_controllers.dart';
 import 'package:myskills_app/util/custom_snack_bar.dart';
 
+
 class ResetPasswordPage extends StatelessWidget {
   const ResetPasswordPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // provide the cubit to the page.
-    return BlocProvider(
-      create: (_) => ResetPasswordCubit(),
-      child: const ResetPasswordScreen(),
-    );
-  }
-}
-
-class ResetPasswordScreen extends StatelessWidget {
-  const ResetPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

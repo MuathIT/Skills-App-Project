@@ -1,7 +1,7 @@
 
 
 
-import 'package:myskills_app/core/data/shared_preference.dart';
+
 
 class Skill {
   // each skill consist of these variables.
@@ -15,9 +15,8 @@ class Skill {
     this.imageUrl = ''
   });
 
-  final newSkill = SharedPreferenceHelper().setString('currentSkillId', currentSkill);
   // this variable will hold the current skill.
-  static final currentSkill = '';
+  // static final currentSkill = '';
 
   // this method will set a new current skill.
   // static void setCurrentSkill (Skill newSkill){

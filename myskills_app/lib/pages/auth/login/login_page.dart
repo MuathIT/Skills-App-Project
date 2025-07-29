@@ -13,18 +13,9 @@ import 'package:myskills_app/pages/widgets/text_button.dart';
 import 'package:myskills_app/util/custom_snack_bar.dart';
 
 
+
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // provide the login cubit to the page.
-    return BlocProvider(create: (_) => LoginCubit(), child: const LoginScreen());
-  }
-}
-
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

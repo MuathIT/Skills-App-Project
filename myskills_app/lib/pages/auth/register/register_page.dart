@@ -11,21 +11,9 @@ import 'package:myskills_app/models/userDetails/user.dart';
 import 'package:myskills_app/pages/widgets/text_button.dart';
 import 'package:myskills_app/util/custom_snack_bar.dart';
 
+
 class RegisterPage extends StatelessWidget {
-  const RegisterPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // provide the register cubit to the page.
-    return BlocProvider(
-      create: (_) => RegisterCubit(),
-      child: RegisterScreen(),
-    );
-  }
-}
-
-class RegisterScreen extends StatelessWidget {
-  RegisterScreen({super.key});
+  RegisterPage({super.key});
 
   // first name controller.
   final _nameController = TextEditingController();

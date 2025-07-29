@@ -6,17 +6,6 @@ import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/models/skill/skill_model.dart';
 import 'package:myskills_app/util/custom_snack_bar.dart';
 
-class AddSKillPage extends StatelessWidget {
-  const AddSKillPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AddSkillCubit(),
-      child: const AddSkillDialog(),
-    );
-  }
-}
 
 class AddSkillDialog extends StatefulWidget {
   const AddSkillDialog({super.key});

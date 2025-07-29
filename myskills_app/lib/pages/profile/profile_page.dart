@@ -11,15 +11,6 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (_) => ProfileCubit()..userInfo(), child: const ProfileScreen());
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorsManager.profilePageBacgroundColor,
       body: BlocBuilder<ProfileCubit, ProfileState>(

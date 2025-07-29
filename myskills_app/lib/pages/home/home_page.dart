@@ -1,38 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:myskills_app/controllers/current_skill/current_skill/current_skill_controller.dart';
 import 'package:myskills_app/controllers/home/home/home_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
-import 'package:myskills_app/models/skill/skill_model.dart';
 import 'package:myskills_app/pages/home/widgets/motivation_card.dart';
 import 'package:myskills_app/pages/home/widgets/skill_card.dart';
 import 'package:myskills_app/pages/home/widgets/skill_progress_card.dart';
 import 'package:myskills_app/pages/new_skill/add_skill_dialog.dart';
-import 'package:myskills_app/pages/skill_details/skill_details_page.dart';
 import 'package:myskills_app/pages/skills/skills_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // provide the cubit to the page.
-    return BlocProvider(
-      create: (_) => HomeCubit()..fetchSkills(),
-      child: HomeScreen(),
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  // // list to hold the user skills.
-  // final List<Skill> _skills = Skill.getSkills();
-
-  // // this to get the current skill.
-  // Skill currentSkill = Skill.currentSkill;
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +27,12 @@ class HomeScreen extends StatelessWidget {
             // store the cubit to use it easly.
             final cubit = context.read<HomeCubit>();
             // show the add skill card dialog.
-            showDialog(context: context, builder: (_) => AddSKillPage()).then((
-              _,
-            ) {
-              // fetch the data again in the home page when the dialog closed.
-              cubit.fetchSkills();
-            });
+            showDialog(context: context, builder: (_) => AddSkillDialog()).then(
+              (_) {
+                // fetch the data again in the home page when the dialog closed.
+                cubit.fetchSkills();
+              },
+            );
           },
           child: Icon(Icons.add, color: Colors.black),
         ),
@@ -77,8 +56,6 @@ class HomeScreen extends StatelessWidget {
           else if (state is HomeSuccess) {
             // get the user skills from database.
             final skills = state.skills;
-            // let the first skill by default be the current skill.
-            final currentSkill = Skill.currentSkill;
 
             // home page.
             return Padding(
@@ -94,31 +71,57 @@ class HomeScreen extends StatelessWidget {
 
                   // Skill Progress
                   SkillProgressCard(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // current skill name.
-                        Text(
-                          currentSkill.name,
-                          style: GoogleFonts.mPlus1Code(
-                            fontSize: 24,
-                            color: ColorsManager.homeWidgetsColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        // current skill level.
-                        Text(
-                          currentSkill.level,
-                          style: GoogleFonts.mPlus1Code(
-                            fontSize: 20,
-                            color: ColorsManager.homeWidgetsColor,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                    child: BlocBuilder<CurrentSkillCubit, CurrentSkillState>(
+                      builder: (context, state) {
+                        // show a dialog when loading the skill.
+                        if (state is CurrentSkillLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        // show the skill when it's loaded successfully.
+                        else if (state is CurrentSkillSuccess) {
+                          // store the current skill.
+                          final currentSkill = state.currentSkill;
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // current skill name.
+                              Text(
+                                currentSkill['name'],
+                                style: GoogleFonts.mPlus1Code(
+                                  fontSize: 24,
+                                  color: ColorsManager.homeWidgetsColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                    
+                              // current skill level.
+                              Text(
+                                currentSkill['level'],
+                                style: GoogleFonts.mPlus1Code(
+                                  fontSize: 20,
+                                  color: ColorsManager.homeWidgetsColor,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                        // show an error message when failed to load the skill.
+                        else if (state is CurrentSkillFailure) {
+                          return Center(
+                            child: Text(
+                              state.failureMessage,
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          );
+                        }
+                        // show nothing in initial state.
+                        return const SizedBox();
+                      },
                     ),
                   ),
 
@@ -127,7 +130,6 @@ class HomeScreen extends StatelessWidget {
                   // const SizedBox(height: 20),
                   Row(
                     children: [
-
                       // Current skill details.
                       SkillCard(
                         child: Container(
@@ -150,21 +152,13 @@ class HomeScreen extends StatelessWidget {
                             children: [
                               // skill name.
                               Text(
-                                currentSkill.name,
+                                'Empty',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              // skill level.
-                              Text(
-                                currentSkill.level,
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              
                             ],
                           ),
                         ),
@@ -177,7 +171,9 @@ class HomeScreen extends StatelessWidget {
                         // onTap? navigate to the skills page.
                         onTap: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => SkillsPage(skills: skills))
+                            MaterialPageRoute(
+                              builder: (_) => SkillsPage(skills: skills),
+                            ),
                           );
                         },
                         child: SkillCard(
@@ -188,7 +184,6 @@ class HomeScreen extends StatelessWidget {
                               separatorBuilder: (context, index) =>
                                   const SizedBox(height: 5),
                               itemBuilder: (_, index) {
-
                                 // store the skill of the current index in the list.
                                 final skill = skills[index];
                                 return Container(
@@ -212,7 +207,8 @@ class HomeScreen extends StatelessWidget {
                                     ],
                                   ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       // skill name.
                                       Text(
@@ -222,7 +218,7 @@ class HomeScreen extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                        
+
                                       // delete button.
                                       // IconButton(
                                       //   onPressed: (){},
@@ -246,7 +242,6 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           }
-
           // home failure.
           else if (state is HomeFailure) {
             return Center(

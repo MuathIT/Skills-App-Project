@@ -43,7 +43,7 @@ class HomeCubit extends Cubit<HomeState>{
 
       final skills = snapshot.docs.map((doc){ // get into the snapshot docs.
         final data = doc.data(); // store the doc's data.
-        data['sId'] = doc.id; // store the doc id.
+        data['skillId'] = doc.id; // store the doc id.
         return data; 
       }).toList(); // store them as a lists.
 
