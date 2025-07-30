@@ -1,7 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myskills_app/controllers/home/add_skill/add_skill_controller.dart';
+import 'package:myskills_app/controllers/add_skill/add_skill_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/models/skill/skill_model.dart';
 import 'package:myskills_app/util/custom_snack_bar.dart';
@@ -117,7 +117,7 @@ class _AddSkillDialogState extends State<AddSkillDialog> {
                   child: GestureDetector(
                     onTap: () {
                       // create a new skill.
-                      Skill s = Skill(name: _skillNamecontroller.text);
+                      Skill s = Skill(name: _skillNamecontroller.text.toUpperCase());
                       // send the skill.
                       setState(() {
                         addSkill(s);

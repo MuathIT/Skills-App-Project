@@ -11,6 +11,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       backgroundColor: ColorsManager.profilePageBacgroundColor,
       body: BlocBuilder<ProfileCubit, ProfileState>(

@@ -28,7 +28,8 @@ void showCustomSnackBar (BuildContext context, String message, {bool success = t
             )
           )
         ],
-      )
+      ),
+      duration: Duration(milliseconds: 800),
     )
   );
 }

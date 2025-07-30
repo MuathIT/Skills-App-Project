@@ -7,9 +7,10 @@ import 'package:myskills_app/bottomBar/bottomBar.dart';
 import 'package:myskills_app/controllers/auth/login/login_controller.dart';
 import 'package:myskills_app/controllers/auth/register/register_controller.dart';
 import 'package:myskills_app/controllers/auth/reset_password/reset_password_controller.dart';
-import 'package:myskills_app/controllers/home/add_skill/add_skill_controller.dart';
+import 'package:myskills_app/controllers/add_skill/add_skill_controller.dart';
 import 'package:myskills_app/controllers/current_skill/current_skill/current_skill_controller.dart';
-import 'package:myskills_app/controllers/home/home/home_controller.dart';
+import 'package:myskills_app/controllers/delete_skill/delete_skill_controller.dart';
+import 'package:myskills_app/controllers/home/home_controller.dart';
 import 'package:myskills_app/controllers/profile/profile_controller.dart';
 import 'package:myskills_app/core/data/shared_preference.dart';
 import 'package:myskills_app/core/data/user_id.dart';
@@ -48,6 +49,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // app blocs providers.
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -71,7 +73,11 @@ class App extends StatelessWidget {
           create: (_) => AddSkillCubit(),
         ),
         BlocProvider(
-          create: (_) => ProfileCubit(),
+          create: (_) => DeleteSkillCubit(),
+        ),
+        BlocProvider(
+          create: (_) => ProfileCubit()..userInfo(),
+          lazy: false,
         ),
       ],
       child: SkillTrackerApp(),

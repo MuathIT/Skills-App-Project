@@ -16,6 +16,11 @@ class CurrentSkillSuccess extends CurrentSkillState {
   final Map<String, dynamic> currentSkill;
   CurrentSkillSuccess(this.currentSkill);
 }
+// handels the state when it's empty.
+class CurrentSkillEmpty extends CurrentSkillState {
+  final String emptyMessage;
+  CurrentSkillEmpty(this.emptyMessage);
+}
 
 class CurrentSkillFailure extends CurrentSkillState {
   final String failureMessage;
@@ -43,8 +48,14 @@ class CurrentSkillCubit extends Cubit<CurrentSkillState>{
       // store the currentSkill data and pass it to the success state.
       final currentSkillData = currentSkillDoc.data();
 
-      // emit success state.
-      emit(CurrentSkillSuccess(currentSkillData!)); // ! means not null
+      // check if the field is empty.
+      if (currentSkillData == null){ 
+        emit(CurrentSkillEmpty("You're not working on a skill yet.")); 
+      } 
+      // if t's not empty? emit the success state.
+      else{
+        emit(CurrentSkillSuccess(currentSkillData));
+      }
     } catch (e) {
       // emit failure state.
       emit(CurrentSkillFailure("Couldn't get your current skill: $e"));

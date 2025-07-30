@@ -10,8 +10,12 @@ class SkillCard extends StatelessWidget {
     return Container(
       height: 150,
       width: 150,
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: ColorsManager.homeWidgetsColor,
+        gradient: LinearGradient(colors: [
+          Colors.white70,
+          ColorsManager.homeWidgetsColor
+        ]),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(color: Colors.amberAccent.shade100, blurRadius: 8),

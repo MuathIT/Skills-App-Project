@@ -13,7 +13,11 @@ class MotivationCard extends StatelessWidget {
             padding: EdgeInsets.all(20),
             width: double.infinity,
             decoration: BoxDecoration(
-              color: ColorsManager.homeWidgetsColor,
+              gradient: LinearGradient(colors: [
+                Colors.white70,
+                ColorsManager.homeWidgetsColor
+              ]),
+
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(

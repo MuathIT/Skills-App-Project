@@ -81,7 +81,8 @@ class SkillDetailsScreen extends StatelessWidget {
                   builder: (context, state) {
                     return GestureDetector(
                       onTap: () {
-                        // when tapped invoke the update current skill function from cubit.
+                       
+                        // onTap? invoke the update current skill function from cubit.
                         context.read<UpdateCurrentSkillCubit>().updateCurrentSkill(
                           UserHelper.uid!,
                           skill['skillId']
