@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myskills_app/controllers/current_skill/current_skill/current_skill_controller.dart';
 import 'package:myskills_app/controllers/delete_skill/delete_skill_controller.dart';
 import 'package:myskills_app/controllers/home/home_controller.dart';
 import 'package:myskills_app/util/custom_snack_bar.dart';
@@ -49,7 +52,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // No, button.
+                    // cancel, button.
                     TextButton(
                       onPressed: () {
                         // close the dialog.
@@ -61,13 +64,15 @@ class DeleteConfirmationDialog extends StatelessWidget {
                       ),
                     ),
 
-                    // Yes, button.
+                    // delete, button.
                     TextButton(
                       onPressed: () {
                         // send the skill id as an argument to delete it.
                         context.read<DeleteSkillCubit>().deleteSkill(skillId).then((_){
-                          // ignore: use_build_context_synchronously
+                          // refresh the home page.
                           context.read<HomeCubit>().fetchSkills();
+                          // refresh the current skill
+                          context.read<CurrentSkillCubit>().fetchCurrentSkill();
                         });
                       },
                       child: Text(

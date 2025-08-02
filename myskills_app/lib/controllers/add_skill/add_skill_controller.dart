@@ -30,7 +30,7 @@ class AddSkillCubit extends Cubit<AddSkillState> {
   // this method will add a new skill in the database. (every new skill by deafult will be a junior level.)
   Future<void> addSkill (Skill newSkill) async{
     if (newSkill.name.isEmpty){
-      emit(AddSkillFailure('The skill name is required.'));
+      emit(AddSkillFailure('The skill name is required'));
       return;
     }
 
@@ -50,7 +50,7 @@ class AddSkillCubit extends Cubit<AddSkillState> {
         }
       );
       // emit success state to the builder.
-      emit(AddSkillSuccess("The new skill has been added to your skills successfully."));
+      emit(AddSkillSuccess("The new skill has been added to your skills successfully"));
 
     } catch (e) {
       // emit failure state to the builder.

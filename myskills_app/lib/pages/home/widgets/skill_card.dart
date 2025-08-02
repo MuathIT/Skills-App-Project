@@ -3,13 +3,19 @@ import 'package:myskills_app/core/resources/colors.dart';
 
 class SkillCard extends StatelessWidget {
   final Widget child;
-  const SkillCard({super.key, required this.child});
+  final double height, width; // sometimes I want the card bigger or smaller.
+  const SkillCard({
+    super.key,
+    required this.child,
+    this.height = 150,
+    this.width = 150,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 150,
-      width: 150,
+      height: height,
+      width: width,
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [

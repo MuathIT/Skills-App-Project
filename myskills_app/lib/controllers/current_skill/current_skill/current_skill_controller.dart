@@ -1,9 +1,11 @@
 
 
 
-// ---------- Current Skill States ----------
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myskills_app/core/data/user_helper.dart';
+
+// ---------- Current Skill States ----------
 
 abstract class CurrentSkillState {}
 
@@ -28,18 +30,25 @@ class CurrentSkillFailure extends CurrentSkillState {
 }
 
 // ---------- Current Skill Cubit ----------
+
 class CurrentSkillCubit extends Cubit<CurrentSkillState>{
   CurrentSkillCubit() : super (CurrentSkillInitial());
 
   // this method will fetch the current skill from firebase.
-  Future<void> fetchCurrentSkill (String userId) async{
+  Future<void> fetchCurrentSkill () async{
     // emit loading state to the builder.
     emit(CurrentSkillLoading());
 
-    // get into the firebase and try to git the user current skill.
+    // check if the user not logged in.
+    if (UserHelper.uid == null){
+      emit(CurrentSkillFailure('User not logged in'));
+      return;
+    }
+
+    // get into the firebase and git the user current skill.
     try {
       // get the user document.
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(UserHelper.uid).get();
       // get the current skill id from the user doc.
       final currentSkillId = userDoc['currentSkillId'];
 

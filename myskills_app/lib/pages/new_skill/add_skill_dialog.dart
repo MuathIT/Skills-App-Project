@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myskills_app/controllers/add_skill/add_skill_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/models/skill/skill_model.dart';
+import 'package:myskills_app/pages/home/widgets/skill_card.dart';
 import 'package:myskills_app/util/custom_snack_bar.dart';
-
 
 class AddSkillDialog extends StatefulWidget {
   const AddSkillDialog({super.key});
@@ -17,6 +17,10 @@ class AddSkillDialog extends StatefulWidget {
 class _AddSkillDialogState extends State<AddSkillDialog> {
   // name controller.
   final _skillNamecontroller = TextEditingController();
+  // skill levels.
+  final List<String> _levels = ['Junior', 'Intermediate', 'Master'];
+  // level holder.
+  String _selectedLevel = 'Junior';
 
   @override
   Widget build(BuildContext context) {
@@ -28,26 +32,25 @@ class _AddSkillDialogState extends State<AddSkillDialog> {
     return BlocConsumer<AddSkillCubit, AddSkillState>(
       listener: (context, state) {
         // show a dialog while loading.
-        if (state is AddSkillLoading){
+        if (state is AddSkillLoading) {
           showDialog(
             context: context,
-            builder: (_) => const Center(child: CircularProgressIndicator())
+            builder: (_) => const Center(child: CircularProgressIndicator()),
           );
         }
         // close the dialog when loading finish.
-        else{
+        else {
           Navigator.of(context, rootNavigator: true).pop();
         }
 
-        if (state is AddSkillSuccess){
+        if (state is AddSkillSuccess) {
           // clear the controller.
           _skillNamecontroller.clear();
           // tell the user that the skill has been added.
           showCustomSnackBar(context, state.successMessage);
           // get back to the home page.
           Navigator.of(context, rootNavigator: true).pop();
-        }
-        else if (state is AddSkillFailure){
+        } else if (state is AddSkillFailure) {
           // tell the user that the skill not added.
           showCustomSnackBar(context, state.failureMessage, success: false);
         }
@@ -61,15 +64,15 @@ class _AddSkillDialogState extends State<AddSkillDialog> {
             'Add a new skill',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          contentPadding: EdgeInsets.only(top: 15),
+          contentPadding: EdgeInsets.only(top: 20, left: 12),
           content: SizedBox(
-            height: 200,
+            height: 325,
+            width: 150,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // skill name textField.
                 Container(
-                  width: 250,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     gradient: LinearGradient(
@@ -79,16 +82,86 @@ class _AddSkillDialogState extends State<AddSkillDialog> {
                   child: TextField(
                     controller: _skillNamecontroller,
                     decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none
-                      ),
+                      border: OutlineInputBorder(borderSide: BorderSide.none),
                       labelText: "Skill Name",
                       labelStyle: TextStyle(
                         color: Colors.grey[850],
-                        fontSize: 18
+                        fontSize: 18,
                       ),
                       hintText: "Type the skill name..",
                     ),
+                  ),
+                ),
+
+                const SizedBox(height: 5),
+
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Choose your level:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+
+                // level field.
+                Container(
+                  height: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: LinearGradient(
+                      colors: [Colors.white60, ColorsManager.homeWidgetsColor],
+                    ),
+                  ),
+
+                  // levels list buttons.
+                  child: ListView(
+                    children: [
+                      // Junior button.
+                      RadioListTile(
+                        value: _levels[0], // the value index in the list.
+                        title: Text(_levels[0]), // tile title (Junior).
+                        groupValue:
+                            _selectedLevel, // the detector that checks if the button is selected by comparing the value is equal to groupValue.
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedLevel =
+                                value!; // make it the selected level.
+                          });
+                        },
+                      ),
+
+                      const SizedBox(height: 5),
+
+                      // Intermediate button.
+                      RadioListTile(
+                        value: _levels[1], // the value index in the list.
+                        title: Text(_levels[1]), // tile title (Intermediate).
+                        groupValue:
+                            _selectedLevel, // the detector that checks if the button is selected by comparing the value is equal to groupValue.
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedLevel =
+                                value!; // make it the selected level.
+                          });
+                        },
+                      ),
+
+                      const SizedBox(height: 5),
+
+                      // Master button.
+                      RadioListTile(
+                        value: _levels[2], // the value index in the list.
+                        title: Text(_levels[2]), // tile title (Master).
+                        groupValue:
+                            _selectedLevel, // the detector that checks if the button is selected by comparing the value is equal to groupValue.
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedLevel =
+                                value!; // make it the selected level.
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ),
 
@@ -117,7 +190,10 @@ class _AddSkillDialogState extends State<AddSkillDialog> {
                   child: GestureDetector(
                     onTap: () {
                       // create a new skill.
-                      Skill s = Skill(name: _skillNamecontroller.text.toUpperCase());
+                      Skill s = Skill(
+                        name: _skillNamecontroller.text.toUpperCase(),
+                        level: _selectedLevel,
+                      );
                       // send the skill.
                       setState(() {
                         addSkill(s);

@@ -16,7 +16,7 @@ class BottomBar extends StatefulWidget {
 
 class _BottomBarState extends State<BottomBar> {
 
-   // this will navigate the app thorugh the pages by the pages index.
+  // this will navigate the app thorugh the pages by the pages index.
   int _selectedIndex = 0;
 
   // this method will give the ability to nevigate to the page by passing its index when pressing its icon in the bottom bar.
@@ -32,8 +32,8 @@ class _BottomBarState extends State<BottomBar> {
     // Home.
     HomePage(),
 
-    ProfilePage(),
     // Profile.
+    ProfilePage(),
 
     // Settings.
     SettingsPage()

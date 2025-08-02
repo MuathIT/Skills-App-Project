@@ -34,7 +34,10 @@ class MotivationCard extends StatelessWidget {
                 "Small steps every day lead to big changes over time.",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20
+                  fontSize: 20,
+                  shadows: [
+                    Shadow(color: Colors.white, blurRadius: 16)
+                  ]
                 ),
               ),
             ),

@@ -13,7 +13,6 @@ import 'package:myskills_app/controllers/delete_skill/delete_skill_controller.da
 import 'package:myskills_app/controllers/home/home_controller.dart';
 import 'package:myskills_app/controllers/profile/profile_controller.dart';
 import 'package:myskills_app/core/data/shared_preference.dart';
-import 'package:myskills_app/core/data/user_id.dart';
 import 'package:myskills_app/core/secrets/supabase_keys.dart';
 import 'package:myskills_app/firebase_options.dart';
 import 'package:myskills_app/pages/auth/login/login_page.dart';
@@ -40,7 +39,7 @@ void main() async{
   );
 
 
-  runApp( App() );
+  runApp( const App() );
 }
 
 
@@ -66,7 +65,7 @@ class App extends StatelessWidget {
           lazy: false, // because we want the skills to load in the home page immediately.
         ),
         BlocProvider(
-          create: (_) => CurrentSkillCubit()..fetchCurrentSkill(UserHelper.uid!),
+          create: (_) => CurrentSkillCubit()..fetchCurrentSkill(),
           lazy: false, // because we want the user current skill to load in the home page immediately.
         ),
         BlocProvider(
@@ -80,7 +79,7 @@ class App extends StatelessWidget {
           lazy: false,
         ),
       ],
-      child: SkillTrackerApp(),
+      child: const SkillTrackerApp(),
     );
   }
 }
@@ -93,9 +92,8 @@ class SkillTrackerApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false, 
       title: 'ترقّي | Tarraqi',
-      
       home: SharedPreferenceHelper().getString('userEmail') == null // save the user time.
-      ? LoginPage()
+      ? LoginPage() 
       : BottomBar()
     );
   }

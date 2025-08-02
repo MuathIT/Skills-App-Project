@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:myskills_app/controllers/current_skill/current_skill/current_skill_controller.dart';
 import 'package:myskills_app/controllers/home/home_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/pages/home/widgets/skill_card.dart';
@@ -93,7 +96,10 @@ class SkillsPage extends StatelessWidget {
                           builder: (_) => SkillDetailsPage(
                             skill: skill,
                           ), // pass the current skill to the page. We will use it there.
-                        );
+                        ).then((value){
+                          context.read<HomeCubit>().fetchSkills();
+                          context.read<CurrentSkillCubit>().fetchCurrentSkill();
+                        });
                       },
                       child: SkillCard(
                         child: Column(
