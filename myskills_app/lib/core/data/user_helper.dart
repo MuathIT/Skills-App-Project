@@ -7,10 +7,10 @@ import 'package:myskills_app/controllers/profile/profile_controller.dart';
 // this class will help for the user details.
 
 class UserHelper{
-  // user id.
-  static String? uid = FirebaseAuth.instance.currentUser?.uid;
-  // user email.
-  static String? uEmail = FirebaseAuth.instance.currentUser?.email;
+
+  // get the user id and email dynmically.
+  static String? get uid => FirebaseAuth.instance.currentUser?.uid;
+  static String? get uEmail => FirebaseAuth.instance.currentUser?.email;
 
   // this method will get the user current skill id.
   static String? getCurrentSkillId (ProfileState state){ // here we pass the state as an argument.

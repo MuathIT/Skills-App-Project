@@ -3,15 +3,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myskills_app/bottomBar/bottomBar.dart';
-import 'package:myskills_app/controllers/auth/login/login_controller.dart';
-import 'package:myskills_app/controllers/auth/register/register_controller.dart';
-import 'package:myskills_app/controllers/auth/reset_password/reset_password_controller.dart';
-import 'package:myskills_app/controllers/add_skill/add_skill_controller.dart';
+import 'package:myskills_app/bottomBar/bottom_bar.dart';
+import 'package:myskills_app/controllers/auth/auth_controller.dart';
+import 'package:myskills_app/controllers/completed_skills/completed_skills_controller.dart';
 import 'package:myskills_app/controllers/current_skill/current_skill/current_skill_controller.dart';
-import 'package:myskills_app/controllers/delete_skill/delete_skill_controller.dart';
 import 'package:myskills_app/controllers/home/home_controller.dart';
 import 'package:myskills_app/controllers/profile/profile_controller.dart';
+import 'package:myskills_app/controllers/tasks/tasks_controller.dart';
 import 'package:myskills_app/core/data/shared_preference.dart';
 import 'package:myskills_app/core/secrets/supabase_keys.dart';
 import 'package:myskills_app/firebase_options.dart';
@@ -38,7 +36,6 @@ void main() async{
     anonKey: SupabaseKeys.anonKey
   );
 
-
   runApp( const App() );
 }
 
@@ -52,16 +49,10 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => RegisterCubit(),
+          create: (_) => AuthCubit(),
         ),
         BlocProvider(
-          create: (_) => LoginCubit(),
-        ),
-        BlocProvider(
-          create: (_) => ResetPasswordCubit(),
-        ),
-        BlocProvider(
-          create: (_) => HomeCubit()..fetchSkills(),
+          create: (_) => HomeCubit()..fetchUnCompletedSkills(),
           lazy: false, // because we want the skills to load in the home page immediately.
         ),
         BlocProvider(
@@ -69,13 +60,15 @@ class App extends StatelessWidget {
           lazy: false, // because we want the user current skill to load in the home page immediately.
         ),
         BlocProvider(
-          create: (_) => AddSkillCubit(),
-        ),
-        BlocProvider(
-          create: (_) => DeleteSkillCubit(),
-        ),
-        BlocProvider(
           create: (_) => ProfileCubit()..userInfo(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (_) => CompletedSkillsCubit()..fetchCompletedSkills(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (_) => TasksCubit()..fetchTasks(),
           lazy: false,
         ),
       ],
@@ -92,7 +85,7 @@ class SkillTrackerApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false, 
       title: 'ترقّي | Tarraqi',
-      home: SharedPreferenceHelper().getString('userEmail') == null // save the user time.
+      home: SharedPreferenceHelper().getString('userEmail') == null // save the user login.
       ? LoginPage() 
       : BottomBar()
     );

@@ -3,8 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:myskills_app/bottomBar/bottomBar.dart';
-import 'package:myskills_app/controllers/auth/login/login_controller.dart';
+import 'package:myskills_app/bottomBar/bottom_bar.dart';
+import 'package:myskills_app/controllers/auth/auth_controller.dart';
+import 'package:myskills_app/controllers/completed_skills/completed_skills_controller.dart';
+import 'package:myskills_app/controllers/current_skill/current_skill/current_skill_controller.dart';
+import 'package:myskills_app/controllers/home/home_controller.dart';
+import 'package:myskills_app/controllers/profile/profile_controller.dart';
+import 'package:myskills_app/controllers/tasks/tasks_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/pages/auth/register/register_page.dart';
 import 'package:myskills_app/pages/auth/reset_password/reset_password.dart';
@@ -13,16 +18,15 @@ import 'package:myskills_app/pages/widgets/text_button.dart';
 import 'package:myskills_app/util/custom_snack_bar.dart';
 
 
-
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
 
-    // this method will send the info to the login methof in the cubit.
-    void login (){
-      context.read<LoginCubit>().login(
+    // this method will send the info to the login method in the cubit.
+    void login () async{
+      context.read<AuthCubit>().login(
         TextFieldControllers.getEmail().text,
         TextFieldControllers.getPassword().text
       );
@@ -30,10 +34,10 @@ class LoginPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: ColorsManager.backgroundColor,
-      body: BlocConsumer<LoginCubit, LoginState>(
+      body: BlocConsumer<AuthCubit, AuthState>(
       listener:  (context, state) {
         // tell the user that the app is loading.
-        if (state is LoginLoading){
+        if (state is AuthLoading){
           showDialog(
             context: context,
             builder: (_) => Center(child: CircularProgressIndicator())
@@ -44,7 +48,7 @@ class LoginPage extends StatelessWidget {
           Navigator.of(context, rootNavigator: true).pop();
         }
 
-        if (state is LoginSuccess){
+        if (state is AuthSuccess){
           // tell the user that he has successfully logged in.
           showCustomSnackBar(context, state.successMessage);
 
@@ -52,12 +56,19 @@ class LoginPage extends StatelessWidget {
           TextFieldControllers.getEmail().clear();
           TextFieldControllers.getPassword().clear();
 
+          // fetch the data after login.
+          context.read<HomeCubit>().fetchUnCompletedSkills();
+          context.read<CurrentSkillCubit>().fetchCurrentSkill();
+          context.read<TasksCubit>().fetchTasks();
+          context.read<ProfileCubit>().userInfo();
+          context.read<CompletedSkillsCubit>().fetchCompletedSkills();
+
           // navigate to the home page.
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => BottomBar())
           );
         }
-        else if (state is LoginFailure){
+        else if (state is AuthFailure){
           // tell the user that he hasn't logged in.
           showCustomSnackBar(context, state.failureMessage, success: false);
         }

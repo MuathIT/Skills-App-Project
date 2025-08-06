@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myskills_app/controllers/current_skill/current_skill/current_skill_controller.dart';
-import 'package:myskills_app/controllers/delete_skill/delete_skill_controller.dart';
 import 'package:myskills_app/controllers/home/home_controller.dart';
 import 'package:myskills_app/util/custom_snack_bar.dart';
 
@@ -13,34 +12,32 @@ class DeleteConfirmationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<DeleteSkillCubit, DeleteSkillState>(
+    // this method will delete the skill.
+    void deleteSkill (){
+      context.read<HomeCubit>().deleteSkill(skillId);
+      context.read<CurrentSkillCubit>().fetchCurrentSkill();
+    }
+    return BlocListener<HomeCubit, HomeState>(
       listener: (context, state) {
-        // show dialog when state is loading.
-        if (state is DeleteLoading) {
-          const Center(child: CircularProgressIndicator());
-        }
         // show a success message when state is success.
-        else if (state is DeleteSuccess) {
-          showCustomSnackBar(context, state.successMessage);
+         if (state is HomeSuccess || state is HomeEmpty) {
+          showCustomSnackBar(context, 'The skill has been deleted successfully');
           // pop the dialog.
-          Navigator.of(context, rootNavigator: true).pop();          
+          Navigator.pop(context);        
         }
         // show a failure message when state is failure.
-        else if (state is DeleteFailure) {
+        else if (state is HomeFailure) {
           showCustomSnackBar(context, state.failureMessage, success: false);
         }
       },
       // build the delete UI.
-      builder: (context, state) {
-        return AlertDialog(
+      child: AlertDialog(
           backgroundColor: Colors.white70,
           title: Align(
             alignment: Alignment.topCenter,
             child: Text('Delete skill'),
           ),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 25,
-          ), // You really want to delete the skill?
+          contentPadding: EdgeInsets.all(16), // You really want to delete the skill?
           content: SizedBox(
             height: 100,
             child: Column(
@@ -67,13 +64,8 @@ class DeleteConfirmationDialog extends StatelessWidget {
                     // delete, button.
                     TextButton(
                       onPressed: () {
-                        // send the skill id as an argument to delete it.
-                        context.read<DeleteSkillCubit>().deleteSkill(skillId).then((_){
-                          // refresh the home page.
-                          context.read<HomeCubit>().fetchSkills();
-                          // refresh the current skill
-                          context.read<CurrentSkillCubit>().fetchCurrentSkill();
-                        });
+                        // delete the skill.
+                        deleteSkill();
                       },
                       child: Text(
                         'Delete',
@@ -85,8 +77,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
               ],
             ),
           ),
-        );
-      },
+        )
     );
   }
 }

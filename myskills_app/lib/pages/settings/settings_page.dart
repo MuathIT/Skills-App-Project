@@ -2,8 +2,9 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:myskills_app/core/data/shared_preference.dart';
+import 'package:myskills_app/controllers/auth/auth_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/pages/auth/login/login_page.dart';
 import 'package:myskills_app/pages/settings/widgets/settings_tile.dart';
@@ -13,6 +14,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
 
       backgroundColor: ColorsManager.backgroundColor,
@@ -32,17 +34,33 @@ class SettingsPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          SettingsTile(
-            title: 'Logout',
-            onTap: () {
-              // clear the user data from the current local storage.
-              SharedPreferenceHelper().clear();
+          BlocListener<AuthCubit, AuthState>(
+            listener: (context, state) {
+              // if the auth state is init.
               // navigate to the login page.
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => LoginPage()),
-                (_) => true
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                  (_) => false
               );
             },
+            child: Column(
+              children: [
+                // logout.
+                SettingsTile(
+                  title: 'Logout',
+                  onTap: (){
+                    context.read<AuthCubit>().logout();
+                  },
+                ),
+                // delete.
+                SettingsTile(
+                  title: 'Delete account',
+                  onTap: (){
+                    context.read<AuthCubit>().deleteUser();
+                  }
+                )
+              ],
+            ),
           )
         ],
       )

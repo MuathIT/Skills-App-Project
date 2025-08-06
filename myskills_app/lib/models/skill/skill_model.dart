@@ -7,11 +7,13 @@ class Skill {
   // each skill consist of these variables.
   String name;
   String level;
+  bool isCompleted;
   String? imageUrl; // A skill could have no image.
 
   Skill({
     required this.name,
     this.level = 'Junior',
+    this.isCompleted = false,
     this.imageUrl = ''
   });
 

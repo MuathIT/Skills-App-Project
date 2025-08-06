@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:myskills_app/controllers/current_skill/current_skill/current_skill_controller.dart';
 import 'package:myskills_app/controllers/home/home_controller.dart';
+import 'package:myskills_app/controllers/tasks/tasks_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/pages/home/widgets/motivation_card.dart';
+import 'package:myskills_app/pages/home/widgets/skillProgress/skill_completed_confirmation.dart';
 import 'package:myskills_app/pages/home/widgets/skill_card.dart';
-import 'package:myskills_app/pages/home/widgets/skill_progress_card.dart';
-import 'package:myskills_app/pages/new_skill/add_skill_dialog.dart';
+import 'package:myskills_app/pages/home/widgets/skillProgress/skill_progress_card.dart';
+import 'package:myskills_app/pages/skills/new_skill/add_skill_dialog.dart';
 import 'package:myskills_app/pages/skills/skills_page.dart';
 import 'package:myskills_app/pages/tasks/tasks.dart';
 import 'package:myskills_app/util/delete_confirmation_dialog.dart';
@@ -22,8 +24,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    // store the home cubit in a variable, we will gonna use it often.
-    final cubit = context.read<HomeCubit>();
     return Scaffold(
       backgroundColor: ColorsManager.backgroundColor,
       floatingActionButton: // add new skill button.
@@ -34,12 +34,7 @@ class _HomePageState extends State<HomePage> {
           hoverColor: Colors.grey[400],
           onPressed: () {
             // show the add skill card dialog.
-            showDialog(context: context, builder: (_) => AddSkillDialog()).then(
-              (_) {
-                // fetch the data again in the home page when the dialog closed.
-                cubit.fetchSkills();
-              },
-            );
+            showDialog(context: context, builder: (_) => AddSkillDialog());
           },
           child: Icon(Icons.add, color: Colors.black),
         ),
@@ -47,282 +42,306 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: const EdgeInsets.only(top: 60, right: 15, left: 15),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          // home page.
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             // motivation.
             MotivationCard(),
 
-            Expanded(
-              child: BlocBuilder<HomeCubit, HomeState>(
+            // empty home.
+            // if (state is HomeEmpty) {
+            //   return Center(
+            //     child: RichText(
+            //       textAlign: TextAlign.center,
+            //       text: TextSpan(
+            //         style: TextStyle(color: Colors.white, fontSize: 24),
+            //         children: [
+            //           TextSpan(text: state.emptyMessage),
+            //           TextSpan(
+            //             text: "\nAdd a new skill to get started :)",
+            //             style: TextStyle(
+            //               color: ColorsManager.homeWidgetsColor,
+            //               fontWeight: FontWeight.bold,
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   );
+            // }
+
+            // const SizedBox(height: 40),
+            const Spacer(),
+
+            // Current Skill Progress
+            Text(
+              'My Current skill'.toUpperCase(),
+              style: TextStyle(
+                fontSize: 20,
+                color: ColorsManager.homeWidgetsColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 15),
+
+            SkillProgressCard(
+              child: BlocBuilder<CurrentSkillCubit, CurrentSkillState>(
                 builder: (context, state) {
-                  // show a dialog when loading data.
-                  if (state is HomeLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  // empty home.
-                  else if (state is HomeEmpty) {
-                    return Center(
-                      child: RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: TextStyle(color: Colors.white, fontSize: 24),
-                          children: [
-                            TextSpan(text: state.emptyMessage),
-                            TextSpan(
-                              text: "\nAdd a new skill to get started :)",
-                              style: TextStyle(
-                                color: ColorsManager.homeWidgetsColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                  if (state is CurrentSkillEmpty) {
+                    // display the emptiness message when the state is empty.
+                    return Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Center(
+                        child: Text(
+                          state.emptyMessage,
+                          style: GoogleFonts.acme(
+                            color: ColorsManager.homeWidgetsColor,
+                            fontSize: 18,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     );
                   }
-                  // success home.
-                  else if (state is HomeSuccess) {
-                    // get the user skills from database.
-                    final skills = state.skills;
-
-                    // home page.
-                    return Column(
-                      children: [
-                        const SizedBox(height: 40),
-
-                        // Current Skill Progress
-                        Column(
-                          children: [
-                            Text(
-                              'My Current skill'.toUpperCase(),
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: ColorsManager.homeWidgetsColor,
-                                fontWeight: FontWeight.bold,
-                              ),
+                  // show the skill when it's loaded successfully.
+                  else if (state is CurrentSkillSuccess) {
+                    // store the current skill.
+                    final currentSkill = state.currentSkill;
+                    return GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => SkillCompletedConfirmation(
+                            skillId: currentSkill['skillId'],
+                          ),
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          // current skill name.
+                          Text(
+                            currentSkill['name'].toString().toUpperCase(),
+                            style: GoogleFonts.mPlus1Code(
+                              fontSize: 24,
+                              color: ColorsManager.homeWidgetsColor,
+                              fontWeight: FontWeight.bold,
                             ),
+                          ),
 
-                            const SizedBox(height: 15),
-
-                            SkillProgressCard(
-                              child: BlocBuilder<CurrentSkillCubit, CurrentSkillState>(
-                                builder: (context, state) {
-                                  // show a dialog when loading the skill.
-                                  if (state is CurrentSkillLoading) {
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  }
-                                  // display the emptiness message when the state is empty.
-                                  else if (state is CurrentSkillEmpty) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(16),
-                                      child: Center(
-                                        child: Text(
-                                          state.emptyMessage,
-                                          style: GoogleFonts.acme(
-                                            color:
-                                                ColorsManager.homeWidgetsColor,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                  // show the skill when it's loaded successfully.
-                                  else if (state is CurrentSkillSuccess) {
-                                    // store the current skill.
-                                    final currentSkill = state.currentSkill;
-                                    return Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        // current skill name.
-                                        Text(
-                                          currentSkill['name']
-                                              .toString()
-                                              .toUpperCase(),
-                                          style: GoogleFonts.mPlus1Code(
-                                            fontSize: 24,
-                                            color:
-                                                ColorsManager.homeWidgetsColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-
-                                        // current skill level.
-                                        Text(
-                                          currentSkill['level'],
-                                          style: GoogleFonts.mPlus1Code(
-                                            fontSize: 20,
-                                            color:
-                                                ColorsManager.homeWidgetsColor,
-                                            // fontStyle: FontStyle.italic,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  }
-                                  // show an error message when failed to load the skill.
-                                  else if (state is CurrentSkillFailure) {
-                                    return Center(
-                                      child: Text(
-                                        state.failureMessage,
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    );
-                                  }
-                                  // show nothing in initial state.
-                                  return const SizedBox();
-                                },
-                              ),
+                          // current skill level.
+                          Text(
+                            currentSkill['level'],
+                            style: GoogleFonts.mPlus1Code(
+                              fontSize: 20,
+                              color: ColorsManager.homeWidgetsColor,
+                              // fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-
-                        Spacer(),
-
-                        // const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            // my tasks card.
-                            Column(
-                              children: [
-                                Text(
-                                  'My Tasks'.toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: ColorsManager.homeWidgetsColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 10),
-
-                                GestureDetector(
-                                  onTap: (){
-                                    // navigate to the tasks page.
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (_) => TasksPage())
-                                    );
-                                  },
-                                  child: SkillCard(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        // skill name.
-                                        Text(
-                                          'Empty',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            Spacer(),
-
-                            // my skills card.
-                            Column(
-                              children: [
-                                Text(
-                                  'My Skills'.toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    color: ColorsManager.homeWidgetsColor,
-                                    fontWeight: FontWeight.bold,
-                                    shadows: [Shadow()],
-                                  ),
-                                ),
-
-                                const SizedBox(height: 10),
-
-                                GestureDetector(
-                                  // onTap? navigate to the skills page.
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => SkillsPage(),
-                                      ),
-                                    );
-                                  },
-                                  child: SkillCard(
-                                    child: ListView.separated(
-                                      itemCount: skills.length,
-                                      separatorBuilder: (context, index) =>
-                                          const SizedBox(height: 5),
-                                      itemBuilder: (_, index) {
-                                        // store the skill of the current index.
-                                        final skill = skills[index];
-                                        return Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-
-                                          children: [
-                                            // skill name.
-                                            Text(
-                                              skill['name'],
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-
-                                            // delete button.
-                                            IconButton(
-                                              // show a confirmation dialog before deletion.
-                                              onPressed: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (_) =>
-                                                      DeleteConfirmationDialog(
-                                                        skillId:
-                                                            skill['skillId'],
-                                                      ),
-                                                );
-                                              },
-                                              icon: const Icon(Icons.delete),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-
-                        Spacer(),
-                      ],
+                          ),
+                        ],
+                      ),
                     );
                   }
-                  // home failure.
-                  else if (state is HomeFailure) {
+                  // show an error message when failed to load the skill.
+                  else if (state is CurrentSkillFailure) {
                     return Center(
                       child: Text(
                         state.failureMessage,
-                        style: TextStyle(color: Colors.red, fontSize: 24),
+                        style: TextStyle(color: Colors.red),
                       ),
                     );
                   }
-
-                  // home initial.
+                  // show nothing in initial state.
                   return const SizedBox();
                 },
               ),
             ),
+
+            const Spacer(),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // my tasks card.
+                Column(
+                  children: [
+                    Text(
+                      'My Tasks'.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: ColorsManager.homeWidgetsColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    GestureDetector(
+                      onTap: () {
+                        // navigate to the tasks page.
+                        Navigator.of(
+                          context,
+                        ).push(MaterialPageRoute(builder: (_) => TasksPage()));
+                      },
+                      child: SkillCard(
+                        width: 170,
+                        child: BlocBuilder<TasksCubit, TasksState>(
+                          builder: (context, state) {
+                            if (state is TasksEmpty) {
+                              return Center(
+                                child: Text(
+                                  state.emptyMessage,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            } else if (state is TasksSuccess) {
+                              // get the tasks list from DB.
+                              final tasks = state.tasks;
+                              // filter the uncompleted tasks.
+                              final unCompletedTasks = [];
+                              for (var task in tasks) {
+                                if (!task['isCompleted']) {
+                                  unCompletedTasks.add(task);
+                                }
+                              }
+                              // display 3 tasks.
+                              return unCompletedTasks.isEmpty
+                                  ? Center(
+                                    child: Text(
+                                        "You have done all your tasks!✅",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                  )
+                                  : ListView.builder(
+                                      itemCount: unCompletedTasks.length > 2
+                                          ? 3 // display the first 3 uncompleted tasks or if the tasks < 3 display them all.
+                                          : unCompletedTasks.length,
+                                      itemBuilder: (_, index) {
+                                        // store the current index task.
+                                        final task = unCompletedTasks[index];
+                                        // display the task name.
+                                        return Text(
+                                          task['name'],
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
+                                        );
+                                      },
+                                    );
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Spacer(),
+
+                // my skills card.
+                Column(
+                  children: [
+                    Text(
+                      'My Skills'.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: ColorsManager.homeWidgetsColor,
+                        fontWeight: FontWeight.bold,
+                        shadows: [Shadow()],
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // card UI.
+                    GestureDetector(
+                      // onTap? navigate to the skills page.
+                      onTap: () {
+                        Navigator.of(
+                          context,
+                        ).push(MaterialPageRoute(builder: (_) => SkillsPage()));
+                      },
+                      child: SkillCard(
+                        width: 170,
+                        child: BlocBuilder<HomeCubit, HomeState>(
+                          builder: (context, state) {
+                            if (state is HomeEmpty) {
+                              return const Center(
+                                child: Text(
+                                  "You don't have any skill",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            } else if (state is HomeSuccess) {
+                              // get the uncompleted skills.
+                              final skills = state.skills;
+                              return ListView.separated(
+                                itemCount: skills.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(height: 5),
+                                itemBuilder: (_, index) {
+                                  // store the skill of the current index.
+                                  final skill = skills[index];
+                                  return Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+
+                                    children: [
+                                      // skill name.
+                                      Text(
+                                        skill['name'],
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+
+                                      // delete button.
+                                      IconButton(
+                                        // show a confirmation dialog before deletion.
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) =>
+                                                DeleteConfirmationDialog(
+                                                  skillId: skill['skillId'],
+                                                ),
+                                          );
+                                        },
+                                        icon: const Icon(Icons.delete),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const Spacer(),
           ],
         ),
       ),

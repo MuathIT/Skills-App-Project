@@ -3,8 +3,8 @@
 // ---------- Profile states ----------
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:myskills_app/core/data/user_helper.dart';
 
 abstract class ProfileState{}
 
@@ -33,10 +33,8 @@ class ProfileCubit extends Cubit<ProfileState>{
     emit(ProfileLoading());
 
     try {
-      // get the user id.
-      final uID = FirebaseAuth.instance.currentUser?.uid;
       // check if the user id is null (user didn't logged in.)
-      if (uID == null){
+      if (UserHelper.uid == null){
         // emit failure state to the builder.
         emit(ProfileFailure('User not logged in'));
         return;
@@ -45,7 +43,7 @@ class ProfileCubit extends Cubit<ProfileState>{
       // if the user has an id? get he's doc data.
       final docSnapshot = await FirebaseFirestore.instance
         .collection('users')
-        .doc(uID)
+        .doc(UserHelper.uid)
         .get();
 
       // check if the user data not found.
@@ -66,10 +64,12 @@ class ProfileCubit extends Cubit<ProfileState>{
         // emit a success state to the builder & send the user data to the state.
         emit(ProfileSuccess(userInfo));
       }
-
     } catch (e) {
       // emit failure state to the builder.
       emit(ProfileFailure("Error: Couldn't fetch the data"));
     }
   }
+
+  // clear user profile method.
+  void clear() => emit(ProfileInitial());
 }

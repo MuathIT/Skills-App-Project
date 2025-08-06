@@ -36,8 +36,6 @@ class CurrentSkillCubit extends Cubit<CurrentSkillState>{
 
   // this method will fetch the current skill from firebase.
   Future<void> fetchCurrentSkill () async{
-    // emit loading state to the builder.
-    emit(CurrentSkillLoading());
 
     // check if the user not logged in.
     if (UserHelper.uid == null){
@@ -56,13 +54,13 @@ class CurrentSkillCubit extends Cubit<CurrentSkillState>{
       final currentSkillDoc = await FirebaseFirestore.instance.collection('skills').doc(currentSkillId).get();
       // store the currentSkill data and pass it to the success state.
       final currentSkillData = currentSkillDoc.data();
-
       // check if the field is empty.
       if (currentSkillData == null){ 
-        emit(CurrentSkillEmpty("You're not working on a skill yet.")); 
+        emit(CurrentSkillEmpty("You're not working on a skill yet")); 
       } 
       // if t's not empty? emit the success state.
       else{
+        currentSkillData['skillId'] = currentSkillDoc.id; // to use it in the UI.
         emit(CurrentSkillSuccess(currentSkillData));
       }
     } catch (e) {
@@ -70,4 +68,23 @@ class CurrentSkillCubit extends Cubit<CurrentSkillState>{
       emit(CurrentSkillFailure("Couldn't get your current skill: $e"));
     }
   }
+
+  // this method will update the skill.
+  Future<void> updateCurrentSkill (String skillId) async{
+    try {
+        // get into the user document and set the new skill.
+        await FirebaseFirestore.instance.collection('users').doc(UserHelper.uid).update(
+          {
+            'currentSkillId' : skillId
+          }
+        );
+        // refresh the current skill.
+        await fetchCurrentSkill();
+      } catch (e) {
+        emit(CurrentSkillFailure("Couldn't change your current skill: $e"));
+      }
+  }
+
+  // clear user current skill method.
+  void clear() => emit(CurrentSkillInitial());
 }

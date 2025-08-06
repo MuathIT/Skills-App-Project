@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:myskills_app/controllers/auth/reset_password/reset_password_controller.dart';
+import 'package:myskills_app/controllers/auth/auth_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/pages/auth/util/textFieldControllers/text_field_controllers.dart';
 import 'package:myskills_app/util/custom_snack_bar.dart';
-
 
 class ResetPasswordPage extends StatelessWidget {
   const ResetPasswordPage({super.key});
@@ -14,7 +13,7 @@ class ResetPasswordPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // this method will send the email to the cubit.
     void resetPassword() {
-      context.read<ResetPasswordCubit>().resetPassword(
+      context.read<AuthCubit>().resetPassword(
         TextFieldControllers.getEmail().text,
       );
     }
@@ -25,9 +24,9 @@ class ResetPasswordPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
-      body: BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
+      body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state is ResetPasswordLoading){
+          if (state is AuthLoading){
             showDialog(
               context: context,
               builder: (_) => Center(child: const CircularProgressIndicator())
@@ -38,7 +37,7 @@ class ResetPasswordPage extends StatelessWidget {
             Navigator.of(context, rootNavigator: true).pop();
           }
 
-          if (state is ResetPasswordSuccess){
+          if (state is AuthSuccess){
             // tell the user that you sent the email.
             showCustomSnackBar(context, state.successMessage);
             // clear the controllers.
@@ -47,7 +46,7 @@ class ResetPasswordPage extends StatelessWidget {
             Navigator.of(context).pop();
           }
 
-          else if (state is ResetPasswordFailure){
+          else if (state is AuthFailure){
             // tell the user that an error occurred.
             showCustomSnackBar(context, state.failureMessage, success: false);
           }
@@ -57,7 +56,7 @@ class ResetPasswordPage extends StatelessWidget {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(25),
 
-              // form shape.
+              // reset password form.
               child: Container(
                 height: 250,
                 width: double.infinity,

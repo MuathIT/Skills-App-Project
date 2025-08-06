@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:myskills_app/bottomBar/bottomBar.dart';
-
-import 'package:myskills_app/controllers/auth/register/register_controller.dart';
+import 'package:myskills_app/bottomBar/bottom_bar.dart';
+import 'package:myskills_app/controllers/auth/auth_controller.dart';
+import 'package:myskills_app/controllers/completed_skills/completed_skills_controller.dart';
+import 'package:myskills_app/controllers/current_skill/current_skill/current_skill_controller.dart';
+import 'package:myskills_app/controllers/home/home_controller.dart';
+import 'package:myskills_app/controllers/profile/profile_controller.dart';
+import 'package:myskills_app/controllers/tasks/tasks_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/pages/auth/login/login_page.dart';
 import 'package:myskills_app/pages/auth/util/textFieldControllers/text_field_controllers.dart';
 import 'package:myskills_app/models/userDetails/user.dart';
 import 'package:myskills_app/pages/widgets/text_button.dart';
 import 'package:myskills_app/util/custom_snack_bar.dart';
+
 
 
 class RegisterPage extends StatelessWidget {
@@ -31,7 +36,7 @@ class RegisterPage extends StatelessWidget {
     }
     // this method will send the user details to the register function.
     void register (){
-      final cubit = context.read<RegisterCubit>();
+      final cubit = context.read<AuthCubit>();
       // create a user object.
       final user = NewUser(
         name: _nameController.text.trim().toUpperCase(),
@@ -40,27 +45,26 @@ class RegisterPage extends StatelessWidget {
       );
 
       if (confirmPassword()){ // check if the passwords are same.
-          // send the details to the register function.
+        // send the details to the register function.
         cubit.register(user);
-          // clear the controllers.
-          _nameController.clear();
-          TextFieldControllers.getEmail().clear();
-          TextFieldControllers.getPassword().clear();
-          _confirmPasswordController.clear();
+        // clear the controllers.
+        _nameController.clear();
+        TextFieldControllers.getEmail().clear();
+        TextFieldControllers.getPassword().clear();
+        _confirmPasswordController.clear();
       }
       // passwords are not identical.
       else {
-        showCustomSnackBar(context, 'Passwords should be idential', success: false);
+        showCustomSnackBar(context, 'Passwords should be same', success: false);
       }
     }
 
-
     return Scaffold(
       backgroundColor: ColorsManager.backgroundColor,
-      body: BlocConsumer<RegisterCubit, RegisterState>(
+      body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           // tell the user that the app is loading.
-          if (state is RegisterLoading) {
+          if (state is AuthLoading) {
             showDialog(
               context: context,
               builder: (_) => Center(child: CircularProgressIndicator()),
@@ -70,14 +74,22 @@ class RegisterPage extends StatelessWidget {
             Navigator.of(context, rootNavigator: true).pop();
           }
 
-          if (state is RegisterSuccess) {
+          if (state is AuthSuccess) {
             // tell the user that he has successfully registered.
             showCustomSnackBar(context, state.successMessage);
+
+            // fetch the data after sign in.
+            context.read<HomeCubit>().fetchUnCompletedSkills();
+            context.read<CurrentSkillCubit>().fetchCurrentSkill();
+            context.read<TasksCubit>().fetchTasks();
+            context.read<ProfileCubit>().userInfo();
+            context.read<CompletedSkillsCubit>().fetchCompletedSkills();
+            
             // navigate to the home page.
             Navigator.of(
               context,
             ).pushReplacement(MaterialPageRoute(builder: (_) => BottomBar()));
-          } else if (state is RegisterFailure) {
+          } else if (state is AuthFailure) {
             // tell the user that he hasn't registered.
             showCustomSnackBar(context, state.failureMessage, success: false);
           }

@@ -1,11 +1,12 @@
 
-
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/pages/home/home_page.dart';
 import 'package:myskills_app/pages/profile/profile_page.dart';
 import 'package:myskills_app/pages/settings/settings_page.dart';
+
+
 
 class BottomBar extends StatefulWidget {
   const BottomBar({super.key});
@@ -44,7 +45,7 @@ class _BottomBarState extends State<BottomBar> {
     return Scaffold(
         body: _pages[_selectedIndex], // display the selected index page.
         bottomNavigationBar: CurvedNavigationBar(
-          backgroundColor: _selectedIndex == 1? ColorsManager.profilePageBacgroundColor : ColorsManager.backgroundColor,
+          backgroundColor: _selectedIndex == 1? Colors.grey : ColorsManager.backgroundColor,
           index: _selectedIndex, // display the current page.
           onTap: _navigate, // onTap? navigate.
           buttonBackgroundColor: ColorsManager.homeWidgetsColor,
