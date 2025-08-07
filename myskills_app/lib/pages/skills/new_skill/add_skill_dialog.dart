@@ -1,4 +1,4 @@
-import 'package:dotted_border/dotted_border.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -52,7 +52,7 @@ class _AddSkillDialogState extends State<AddSkillDialog> {
           ),
           contentPadding: EdgeInsets.all(0),
           content: Container(
-            height: 315,
+            height: 275,
             width: 150,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(25)),
             child: Padding(
@@ -154,25 +154,8 @@ class _AddSkillDialogState extends State<AddSkillDialog> {
                     ),
                   ),
               
-                  const SizedBox(height: 25),
-              
-                  // skill image field.
-                  GestureDetector(
-                    onTap: () {},
-                    child: DottedBorder(
-                      padding: const EdgeInsets.all(8),
-                      borderType: BorderType.Circle,
-                      dashPattern: const [4, 2],
-                      strokeWidth: 2,
-                      color: Colors.grey,
-                      child: const Icon(
-                        Icons.image,
-                        color: Colors.grey,
-                        size: 40,
-                      ),
-                    ),
-                  ),
-              
+                  Spacer(),
+
                   // add skill button.
                   Align(
                     alignment: Alignment.bottomRight,

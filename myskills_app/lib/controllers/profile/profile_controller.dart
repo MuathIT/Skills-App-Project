@@ -3,8 +3,10 @@
 // ---------- Profile states ----------
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:myskills_app/core/data/user_helper.dart';
+import 'package:myskills_app/util/pick_image.dart';
 
 abstract class ProfileState{}
 
@@ -69,6 +71,66 @@ class ProfileCubit extends Cubit<ProfileState>{
       emit(ProfileFailure("Error: Couldn't fetch the data"));
     }
   }
+
+
+  // this method will upload the image to the UI.
+  Future<void> pickAndUploadImage() async {
+    // get the pickedImage data.
+    final pickedImage = await pickImage();
+
+    //   // image url.
+    // String? uploadedImageUrl;
+
+    // image bytes.
+    // Uint8List? imageData;
+
+    if (pickedImage != null) {
+      try {
+        // read the image bytes.
+        final bytes = await pickedImage.readAsBytes();
+        // image name.
+        final imageName = pickedImage.name;
+
+        // refresh the page and store the image bytes in imageData.
+        // imageData = bytes;
+
+        // image path.
+        final imagePath = await uploadImageURL(bytes, imageName);
+
+        // refresh the page and display the image.
+
+        // check if the url is empty.
+        if (imagePath.isEmpty){
+          emit(ProfileFailure("You didn't picked a pic"));
+          return;
+        }
+
+        // update the user avatar field.
+        await FirebaseFirestore.instance.collection('users')
+        .doc(UserHelper.uid)
+        .update(
+          {
+            'avatar' : imagePath
+          }
+        );
+        // refresh the profile page.
+        await userInfo();
+
+      } catch (e) {
+        emit(ProfileFailure("Couldn't change your profile pic: $e"));
+      }
+    }
+  }
+
+  // // this method will change the user avatar. 
+  // Future<void> changeAvatar (String imageUrl) async{
+    
+
+  //   } catch (e) {
+
+  //   }
+  // }
+
 
   // clear user profile method.
   void clear() => emit(ProfileInitial());

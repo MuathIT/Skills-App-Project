@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,8 +6,15 @@ import 'package:myskills_app/controllers/completed_skills/completed_skills_contr
 import 'package:myskills_app/controllers/profile/profile_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +57,79 @@ class ProfilePage extends StatelessWidget {
                           // ),
 
                           // user avatar.
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundImage: AssetImage('assets/images/motivation.jpg'),
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  backgroundColor: Colors.white70,
+                                  title: Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Text('Edit avatar'),
+                                  ),
+                                  contentPadding: EdgeInsets.all(
+                                    16,
+                                  ), // You really want to delete the skill?
+                                  content: SizedBox(
+                                    height: 100,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        // answers
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            // cancel, button.
+                                            TextButton(
+                                              onPressed: () {
+                                                // close the dialog.
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                'Cancel',
+                                                style: TextStyle(
+                                                  color: Colors.blue,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ),
+
+                                            // delete, button.
+                                            TextButton(
+                                              onPressed: () {
+                                                // pick image.
+                                                // pickAndUploadImage();
+                                                // save the image.
+                                                context.read<ProfileCubit>().pickAndUploadImage();
+                                                // pop the dialog.
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                'Edit avatar',
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundImage: user['avatar'] == null 
+                              ? AssetImage('assets/images/motivation.jpg')
+                              : NetworkImage(
+                                  user['avatar'],
+                                ),
+                              
+                            ),
                           ),
 
                           // user name.
@@ -61,14 +139,10 @@ class ProfilePage extends StatelessWidget {
                               color: Colors.grey[300],
                               fontSize: 28,
                             ),
-                          ), 
+                          ),
 
                           // (more) icon.
-                          Icon(
-                            Icons.more_horiz,
-                            color: Colors.grey,
-                            size: 30,
-                          ),
+                          Icon(Icons.more_horiz, color: Colors.grey, size: 30),
                         ],
                       ),
 
@@ -96,9 +170,9 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
 
-              // completed skills list.
-               Expanded(
-                 child: Container(
+                // completed skills list.
+                Expanded(
+                  child: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey,
                       borderRadius: BorderRadius.only(
@@ -106,73 +180,73 @@ class ProfilePage extends StatelessWidget {
                         topRight: Radius.circular(25),
                       ),
                     ),
-                    child: BlocBuilder<CompletedSkillsCubit, CompletedSkillsState>(
-                      builder: (context, state) {
-                        if (state is SkillsEmpty){
-                          return Center(
-                            child: Text(
-                              state.emptyMessage,
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold
-                              ),
-                            ),
-                          );
-                        }
-                        else if (state is SkillsSuccess) {
-                          final skills = state.skills; // user all skills.
-
-                          // completed skills UI.
-                          return ListView.separated(
-                            itemCount: skills.length,
-                            separatorBuilder: (context, index) =>
-                                SizedBox(height: 10),
-                            itemBuilder: (context, index) {
-                              // store the current completed task index.
-                              final completedSkill = skills[index];
-                                            
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                ),
-                                child: Container(
-                                  height: 75,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.brown[300],
-                                    borderRadius: BorderRadius.circular(15),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black45,
-                                        blurRadius: 12,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          completedSkill['name'],
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                    child:
+                        BlocBuilder<CompletedSkillsCubit, CompletedSkillsState>(
+                          builder: (context, state) {
+                            if (state is SkillsEmpty) {
+                              return Center(
+                                child: Text(
+                                  state.emptyMessage,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               );
-                            },
-                          );
-                        }
-                        return const SizedBox();
-                      },
-                    ),
+                            } else if (state is SkillsSuccess) {
+                              final skills = state.skills; // user all skills.
+
+                              // completed skills UI.
+                              return ListView.separated(
+                                itemCount: skills.length,
+                                separatorBuilder: (context, index) =>
+                                    SizedBox(height: 10),
+                                itemBuilder: (context, index) {
+                                  // store the current completed task index.
+                                  final completedSkill = skills[index];
+
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                    ),
+                                    child: Container(
+                                      height: 75,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Colors.brown[300],
+                                        borderRadius: BorderRadius.circular(15),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black45,
+                                            blurRadius: 12,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              completedSkill['name'],
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        ),
                   ),
-               ),
+                ),
               ],
             );
           }

@@ -3,7 +3,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:myskills_app/bottomBar/bottom_bar.dart';
 import 'package:myskills_app/controllers/auth/auth_controller.dart';
 import 'package:myskills_app/controllers/completed_skills/completed_skills_controller.dart';
 import 'package:myskills_app/controllers/current_skill/current_skill/current_skill_controller.dart';
@@ -13,7 +12,7 @@ import 'package:myskills_app/controllers/tasks/tasks_controller.dart';
 import 'package:myskills_app/core/data/shared_preference.dart';
 import 'package:myskills_app/core/secrets/supabase_keys.dart';
 import 'package:myskills_app/firebase_options.dart';
-import 'package:myskills_app/pages/auth/login/login_page.dart';
+import 'package:myskills_app/pages/splash/splash_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async{
@@ -72,22 +71,20 @@ class App extends StatelessWidget {
           lazy: false,
         ),
       ],
-      child: const SkillTrackerApp(),
+      child: const SKillsy(),
     );
   }
 }
 
-class SkillTrackerApp extends StatelessWidget {
-  const SkillTrackerApp({super.key});
+class SKillsy extends StatelessWidget {
+  const SKillsy({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false, 
-      title: 'ترقّي | Tarraqi',
-      home: SharedPreferenceHelper().getString('userEmail') == null // save the user login.
-      ? LoginPage() 
-      : BottomBar()
+      title: 'Skillsy',
+      home: const SplashScreen()
     );
   }
 }
