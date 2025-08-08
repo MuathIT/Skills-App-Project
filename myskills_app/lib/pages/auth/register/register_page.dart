@@ -112,7 +112,7 @@ class RegisterPage extends StatelessWidget {
                   children: [
                     // box title.
                     Text(
-                      'Welcome To Tarraqi',
+                      'Welcome To Skillsy',
                       style: GoogleFonts.bebasNeue(
                         color: ColorsManager.homeWidgetsColor,
                         fontSize: 36,

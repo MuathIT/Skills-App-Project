@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
             // app name
             Text(
-              "MySkills",
+              "Skillsy",
               style: GoogleFonts.bebasNeue(
                 fontSize: 40,
                 color: ColorsManager.homeWidgetsColor,
