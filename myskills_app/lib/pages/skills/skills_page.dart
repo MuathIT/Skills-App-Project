@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:myskills_app/controllers/home/home_controller.dart';
+import 'package:myskills_app/controllers/profile/profile_controller.dart';
 import 'package:myskills_app/core/resources/colors.dart';
 import 'package:myskills_app/pages/home/widgets/skill_card.dart';
 import 'package:myskills_app/pages/skills/skill_details/skill_details_page.dart';
@@ -35,7 +36,7 @@ class SkillsPage extends StatelessWidget {
           style: GoogleFonts.mPlus1p(
             color: ColorsManager.homeWidgetsColor,
             fontSize: 24,
-            fontWeight: FontWeight.bold
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
@@ -43,30 +44,27 @@ class SkillsPage extends StatelessWidget {
       body: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           // display an emptiness message when state is empty state.
-          if (state is HomeEmpty){
+          if (state is HomeEmpty) {
             return const Center(
               child: Text(
                 "You don't have any skill yet",
                 style: TextStyle(
                   fontSize: 24,
-                  color: ColorsManager.homeWidgetsColor
+                  color: ColorsManager.homeWidgetsColor,
                 ),
               ),
             );
           }
           // get & display the skills when state is success state.
-          else if (state is HomeSuccess){
+          else if (state is HomeSuccess) {
             // get the skills from the state.
             final skills = state.skills;
-            // filter the not completed skills.
-            final notCompletedSkills = [];
-            for (var skill in skills){
-              if (!skill['isCompleted']){ // loop through the skills and store the not completed ones.
-                notCompletedSkills.add(skill);
-              }
-            }
+            // get the user current skill id.
+            final currentSkillId = context
+                .watch<ProfileCubit>()
+                .currentSkillId; // watch for update dynamically.
             return GridView.builder(
-              itemCount: notCompletedSkills.length,
+              itemCount: skills.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2, // this will build two box in each row.
                 crossAxisSpacing: 50, // the horziontal space between each row.
@@ -76,8 +74,10 @@ class SkillsPage extends StatelessWidget {
               // the skills cards.
               itemBuilder: (_, index) {
                 // store the current index skill.
-                final skill = notCompletedSkills[index];
-
+                final skill = skills[index];
+                // check if the current index skill is the current user skill.
+                final bool isTheCurrentSkill =
+                    skill['skillId'] == currentSkillId;
                 // a slidable skill card for deletion. (slid to delete.)
                 return Slidable(
                   direction: Axis.horizontal,
@@ -105,24 +105,21 @@ class SkillsPage extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (_) => SkillDetailsPage(
-                          skill: skill, // pass the current skill to the page. We will use it there.
+                          skill:
+                              skill, // pass the current skill to the page. We will use it there.
                         ),
                       );
                     },
                     child: SkillCard(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // skill name.
-                          Text(
-                            skill['name'],
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      child: Center(
+                        child: Text(
+                          skill['name'],
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: isTheCurrentSkill ? Colors.green : Colors.black // show the current skill in different color.
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -131,7 +128,7 @@ class SkillsPage extends StatelessWidget {
             );
           }
           // display error message when state is failure state.
-          else if (state is HomeFailure){
+          else if (state is HomeFailure) {
             return Center(
               child: Text(
                 state.failureMessage,
@@ -142,7 +139,7 @@ class SkillsPage extends StatelessWidget {
 
           // when state is initial state.
           return const SizedBox();
-        }
+        },
       ),
     );
   }

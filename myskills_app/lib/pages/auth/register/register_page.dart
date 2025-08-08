@@ -86,9 +86,10 @@ class RegisterPage extends StatelessWidget {
             context.read<CompletedSkillsCubit>().fetchCompletedSkills();
             
             // navigate to the home page.
-            Navigator.of(
-              context,
-            ).pushReplacement(MaterialPageRoute(builder: (_) => BottomBar()));
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => BottomBar()),
+              (_) => false
+            );
           } else if (state is AuthFailure) {
             // tell the user that he hasn't registered.
             showCustomSnackBar(context, state.failureMessage, success: false);

@@ -21,14 +21,19 @@ class _SkillDetailsScreenState extends State<SkillDetailsPage> {
   bool showNewLevelTextField = false;
   // levels list.
   final List<String> _levels = ['Junior', 'Intermediate', 'Master'];
+
   // the selected level index.
   String? selectedLevel;
+  
 
   @override
   Widget build(BuildContext context) {
     // this variable will store the selected skill id.
     final skillId = widget.skill['skillId'];
-
+    // get the user current skill id.
+    final currentSkillId = context.watch<ProfileCubit>().currentSkillId;
+    // check if this skill is the user current skill.
+    final bool isTheCurrentSkill = skillId == currentSkillId;
     // this method will change the user currentSkill.
     void changeUserSkill() {
       context.read<CurrentSkillCubit>().updateCurrentSkill(skillId);
@@ -48,7 +53,7 @@ class _SkillDetailsScreenState extends State<SkillDetailsPage> {
           Navigator.pop(context);
           showCustomSnackBar(
             context,
-            'Your current skill has been changed successfully.',
+            'Your current skill has been changed successfully',
           );
         }
         // show a failure snack bar when update failed.
@@ -104,208 +109,202 @@ class _SkillDetailsScreenState extends State<SkillDetailsPage> {
                   showNewLevelTextField
                       ? BlocListener<HomeCubit, HomeState>(
                           listener: (context, state) {
-                            if (state is HomeSuccess){
+                            if (state is HomeSuccess) {
+                              showCustomSnackBar(context, "Your level has been changed to $selectedLevel");
+                              // pop the dialog.
                               Navigator.of(context, rootNavigator: true).pop();
-                            }
-                            else if (state is HomeFailure){
-                              showCustomSnackBar(context, state.failureMessage, success: false);
+                              // refresh the current skill.
+                              context.read<CurrentSkillCubit>().fetchCurrentSkill();
+                            } else if (state is HomeFailure) {
+                              showCustomSnackBar(
+                                context,
+                                state.failureMessage,
+                                success: false,
+                              );
                             }
                           },
                           child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Choose your level:',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Choose your level:',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
 
-                                Container(
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.white60,
-                                        ColorsManager.homeWidgetsColor,
-                                      ],
-                                    ),
-                                  ),
-
-                                  // levels list buttons.
-                                  child: ListView(
-                                    children: [
-                                      // Junior button.
-                                      RadioListTile(
-                                        value:
-                                            _levels[0], // the value index in the list.
-                                        title: Text(
-                                          _levels[0],
-                                        ), // tile title (Junior).
-                                        groupValue:
-                                            selectedLevel, // the detector that checks if the button is selected by comparing the value is equal to groupValue.
-                                        onChanged: (value) {
-                                          setState(() {
-                                            selectedLevel =
-                                                value!; // make it the selected level.
-                                          });
-                                        },
-                                      ),
-
-                                      const SizedBox(height: 5),
-
-                                      // Intermediate button.
-                                      RadioListTile(
-                                        value:
-                                            _levels[1], // the value index in the list.
-                                        title: Text(
-                                          _levels[1],
-                                        ), // tile title (Intermediate).
-                                        groupValue:
-                                            selectedLevel, // the detector that checks if the button is selected by comparing the value is equal to groupValue.
-                                        onChanged: (value) {
-                                          setState(() {
-                                            selectedLevel =
-                                                value!; // make it the selected level.
-                                          });
-                                        },
-                                      ),
-
-                                      const SizedBox(height: 5),
-
-                                      // Master button.
-                                      RadioListTile(
-                                        value:
-                                            _levels[2], // the value index in the list.
-                                        title: Text(
-                                          _levels[2],
-                                        ), // tile title (Master).
-                                        groupValue:
-                                            selectedLevel, // the detector that checks if the button is selected by comparing the value is equal to groupValue.
-                                        onChanged: (value) {
-                                          setState(() {
-                                            selectedLevel =
-                                                value!; // make it the selected level.
-                                          });
-                                        },
-                                      ),
+                              Container(
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.white60,
+                                      ColorsManager.homeWidgetsColor,
                                     ],
                                   ),
                                 ),
 
-                                const SizedBox(height: 15),
-
-                                // save, cancel buttons.
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                                // levels list buttons.
+                                child: ListView(
                                   children: [
-                                    // cancel
-                                    Container(
-                                      height: 35,
-                                      decoration: BoxDecoration(
-                                        color: Colors.transparent,
-                                        border: BoxBorder.all(
-                                          color: Colors.black,
-                                          style: BorderStyle.solid,
-                                          width: 0.5,
-                                        ),
-                                      ),
-                                      child: TextButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            // return to make it my current skill button.
-                                            showNewLevelTextField = false;
-                                          });
-                                        },
-                                        child: Text(
-                                          'Cancel',
-                                          style: TextStyle(color: Colors.black),
-                                        ),
-                                      ),
+                                    // Junior button.
+                                    RadioListTile(
+                                      value:
+                                          _levels[0], // the value index in the list.
+                                      title: Text(
+                                        _levels[0],
+                                      ), // tile title (Junior).
+                                      groupValue:
+                                          selectedLevel, // the detector that checks if the button is selected by comparing the value is equal to groupValue.
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedLevel =
+                                              value!; // make it the selected level.
+                                        });
+                                      },
                                     ),
 
-                                    const SizedBox(width: 15),
+                                    const SizedBox(height: 5),
 
-                                    // save.
-                                    Container(
-                                      height: 35,
-                                      decoration: BoxDecoration(
-                                        color: Colors.transparent,
-                                        border: BoxBorder.all(
-                                          color: Colors.black,
-                                          style: BorderStyle.solid,
-                                          width: 0.5,
-                                        ),
-                                      ),
-                                      child: TextButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            // change the user level.
-                                            changeUserLevel();
-                                            showNewLevelTextField = false;
-                                          });
-                                        },
-                                        child: Text(
-                                          'Save',
-                                          style: TextStyle(color: Colors.black),
-                                        ),
-                                      ),
+                                    // Intermediate button.
+                                    RadioListTile(
+                                      value:
+                                          _levels[1], // the value index in the list.
+                                      title: Text(
+                                        _levels[1],
+                                      ), // tile title (Intermediate).
+                                      groupValue:
+                                          selectedLevel, // the detector that checks if the button is selected by comparing the value is equal to groupValue.
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedLevel =
+                                              value!; // make it the selected level.
+                                        });
+                                      },
+                                    ),
+
+                                    const SizedBox(height: 5),
+
+                                    // Master button.
+                                    RadioListTile(
+                                      value:
+                                          _levels[2], // the value index in the list.
+                                      title: Text(
+                                        _levels[2],
+                                      ), // tile title (Master).
+                                      groupValue:
+                                          selectedLevel, // the detector that checks if the button is selected by comparing the value is equal to groupValue.
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedLevel =
+                                              value!; // make it the selected level.
+                                        });
+                                      },
                                     ),
                                   ],
                                 ),
-                              ],
-                            )
-                      )
-                      // else, check if this skill card is the user current skill? hide make it my current skill button.
-                      // I used a bloc builder here to handle if the user change he's current skill.
-                      : BlocBuilder<ProfileCubit, ProfileState>(
-                          builder: (_, state) {
-                            if (state is ProfileSuccess) {
-                              // get the current skill id.
-                              final currentSkillId =
-                                  state.user['currentSkillId'];
-                              // check if this skill card is the user current skill.
-                              final isTheCurrentSkill =
-                                  currentSkillId == widget.skill['skillId'];
-                              return isTheCurrentSkill
-                                  ? SizedBox()
-                                  : GestureDetector(
-                                      onTap: () {
-                                        // onTap? update the current skill.
-                                        changeUserSkill();
-                                        // refresh the user info.
-                                        context.read<ProfileCubit>().userInfo();
-                                      },
-                                      child: Container(
-                                        width: double.infinity,
-                                        height: 50,
-                                        decoration: BoxDecoration(
-                                          color: ColorsManager.barColor,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            "Make it my current skill",
-                                            style: TextStyle(
-                                              color: ColorsManager
-                                                  .homeWidgetsColor,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              shadows: [
-                                                Shadow(
-                                                  color: Colors.white70,
-                                                  blurRadius: 12,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
+                              ),
+
+                              const SizedBox(height: 15),
+
+                              // save, cancel buttons.
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  // cancel
+                                  Container(
+                                    height: 35,
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      border: BoxBorder.all(
+                                        color: Colors.black,
+                                        style: BorderStyle.solid,
+                                        width: 0.5,
                                       ),
-                                    );
-                            }
-                            return SizedBox();
+                                    ),
+                                    child: TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          // return to make it my current skill button.
+                                          showNewLevelTextField = false;
+                                        });
+                                      },
+                                      child: Text(
+                                        'Cancel',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 15),
+
+                                  // save.
+                                  Container(
+                                    height: 35,
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      border: BoxBorder.all(
+                                        color: Colors.black,
+                                        style: BorderStyle.solid,
+                                        width: 0.5,
+                                      ),
+                                    ),
+                                    child: TextButton(
+                                      onPressed: () {
+                                        // handle if the user didn't choose any level.
+                                        if (selectedLevel == null){
+                                          setState(() {
+                                            showNewLevelTextField = false;
+                                          });
+                                        }
+                                        else{
+                                          // change the user level.
+                                          changeUserLevel();
+                                        }
+                                      },
+                                      child: Text(
+                                        'Save',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
+                      // else, check if this skill card is the user current skill? hide make it my current skill button.
+                      : isTheCurrentSkill
+                      ? SizedBox()
+                      : GestureDetector(
+                          onTap: () {
+                            // onTap? update the current skill.
+                            changeUserSkill();
+                            context.read<ProfileCubit>().userInfo();
                           },
+                          child: Container(
+                            width: double.infinity,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: ColorsManager.barColor,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Make it my current skill",
+                                style: TextStyle(
+                                  color: ColorsManager.homeWidgetsColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  shadows: [
+                                    Shadow(
+                                      color: Colors.white70,
+                                      blurRadius: 12,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                 ],
               ),

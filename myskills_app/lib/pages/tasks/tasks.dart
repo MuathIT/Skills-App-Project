@@ -132,7 +132,18 @@ class _TasksScreenState extends State<TasksPage> {
                                   : TextDecoration.none,
                             ),
                           ),
-                          SizedBox(),
+                          task['isCompleted']
+                          ? Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Align(
+                                alignment: Alignment.topRight,
+                                child: Icon(
+                                  Icons.check_circle_outline,
+                                  color: Colors.green[800],
+                                ),
+                              ),
+                          )
+                          : SizedBox(),
                         ],
                       ),
                     ),

@@ -64,8 +64,9 @@ class LoginPage extends StatelessWidget {
           context.read<CompletedSkillsCubit>().fetchCompletedSkills();
 
           // navigate to the home page.
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => BottomBar())
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => BottomBar()),
+            (_) => false
           );
         }
         else if (state is AuthFailure){

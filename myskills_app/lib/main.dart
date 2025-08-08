@@ -75,7 +75,6 @@ class App extends StatelessWidget {
     );
   }
 }
-
 class SKillsy extends StatelessWidget {
   const SKillsy({super.key});
 

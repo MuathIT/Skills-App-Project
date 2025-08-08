@@ -26,7 +26,7 @@ class WelcomePage extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: AssetImage('assets/images/logo2.png'),
+                        image: AssetImage('assets/images/logo3.png'),
                         fit: BoxFit.cover
                       )
                     ),

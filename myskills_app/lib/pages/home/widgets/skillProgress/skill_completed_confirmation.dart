@@ -15,7 +15,7 @@ class SkillCompletedConfirmation extends StatelessWidget {
       listener: (context, state) {
         // empty state here like success state.
         if (state is HomeSuccess || state is HomeEmpty){
-          showCustomSnackBar(context, "The skill has been marked as successfully");
+          showCustomSnackBar(context, "The skill has been marked as completed");
           // fetch the current skill to remove the skill from the progress box.
           context.read<CurrentSkillCubit>().fetchCurrentSkill();
           // fetch the completed skills to add the skill to the profile page.

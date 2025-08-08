@@ -29,6 +29,25 @@ class ProfileFailure extends ProfileState {
 class ProfileCubit extends Cubit<ProfileState>{
   ProfileCubit () : super (ProfileInitial());
 
+  // name.
+  String? get uName  {
+    if (state is ProfileSuccess){
+      return (state as ProfileSuccess).user['name'];
+    }
+    else {
+      return null;
+    }    
+  }
+  // current skill id.
+  String? get currentSkillId {
+    if (state is ProfileSuccess){
+      return (state as ProfileSuccess).user['currentSkillId'];
+    }
+    else {
+      return null;
+    }
+  }
+
   // this method will fetch the user info.
   Future<void> userInfo () async{
     // emit loading state to the builder.

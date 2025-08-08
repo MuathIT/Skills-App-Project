@@ -89,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               child: Text(
                                                 'Cancel',
                                                 style: TextStyle(
-                                                  color: Colors.blue,
+                                                  color: Colors.blueGrey,
                                                   fontSize: 20,
                                                 ),
                                               ),
@@ -108,7 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               child: Text(
                                                 'Edit avatar',
                                                 style: TextStyle(
-                                                  color: Colors.red,
+                                                  color: Colors.blue,
                                                   fontSize: 20,
                                                 ),
                                               ),

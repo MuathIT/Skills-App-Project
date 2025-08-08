@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Colors.white70,
                 shape: BoxShape.circle,
                 image: const DecorationImage(
-                  image: AssetImage('assets/images/logo2.png'), // your app logo
+                  image: AssetImage('assets/images/logo3.png'), // your app logo
                   fit: BoxFit.cover,
                 ),
                 boxShadow: [
