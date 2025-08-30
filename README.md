@@ -36,3 +36,7 @@ Skillsy is my final project for the Flutter App Development Bootcamp. It’s a p
 
 ## 📸 Screenshots | لقطات شاشة
 see the pics folder :)
+
+## For contact | للتواصل
+- Email: 1213muaf@gmail.com
+  
