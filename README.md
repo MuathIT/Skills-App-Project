@@ -43,6 +43,6 @@ see the pics folder :)
 
 ## 📬 Contact | للتواصل 
 - GitHub: [MuathIT](https://github.com/MuathIT)  
-- Email: muathalrsaini@gmail.com  
+- Email: m.alrsaini@gmail.com  
 - LinkedIn: [Muath Al-Rsaini](https://www.linkedin.com/in/muath-al-rsaini-60322836b/)  
   
